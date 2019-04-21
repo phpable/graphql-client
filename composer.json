@@ -1,0 +1,22 @@
+{
+	"name": "able/graphql-client",
+	"type": "library",
+	"keywords": ["phpable", "graphql-client"],
+	"description": "phpABLE GraphQL client implementation",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Kassius Kress",
+			"email": "hacpaka@kamora.vn"
+		}
+	],
+	"require": {
+		"php": ">=7.2.0",
+		"able/statics": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"Able\\GraphQL\\Client\\": "src/"
+		}
+	}
+}
