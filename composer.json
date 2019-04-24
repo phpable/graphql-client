@@ -12,11 +12,14 @@
 	],
 	"require": {
 		"php": ">=7.2.0",
-		"able/statics": "dev-master"
+		"able/statics": "dev-master",
+		"able/helpers": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
 			"Able\\GraphQL\\Client\\": "src/"
 		}
-	}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true
 }
