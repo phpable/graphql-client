@@ -1,5 +1,5 @@
 <?php
-namespace Able\GraphQL\Client\Abstractions;
+namespace Able\GraphQL\Client\Utilities\Abstractions;
 
 use \Able\Helpers\Arr;
 use \Able\Helpers\Src;

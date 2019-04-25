@@ -1,7 +1,7 @@
 <?php
 namespace Able\GraphQL\Client;
 
-use Able\GraphQL\Client\Abstractions\AProvider;
+use Able\GraphQL\Client\Utilities\Abstractions\AProvider;
 
 class Provider extends AProvider {
 

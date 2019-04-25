@@ -1,5 +1,5 @@
 <?php
-namespace Able\GraphQL\Client;
+namespace Able\GraphQL\Client\Utilities;
 
 use \Able\Helpers\Arr;
 use \Exception;
@@ -37,8 +37,9 @@ class Connection {
 
 	/**
 	 * @param string $query
+	 * @return void
 	 */
-	public final function withQuery(string $query) {
+	public final function withQuery(string $query): void {
 		$this->query = $query;
 	}
 
@@ -50,8 +51,9 @@ class Connection {
 	/**
 	 * @param string $name
 	 * @param string $value
+	 * @return void
 	 */
-	public final function withVariable(string $name, string $value) {
+	public final function withVariable(string $name, string $value): void {
 		$this->Variables[$name] = $value;
 	}
 
