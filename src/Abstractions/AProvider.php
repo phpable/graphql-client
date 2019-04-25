@@ -2,22 +2,22 @@
 namespace Able\GraphQL\Client\Abstractions;
 
 use \Able\GraphQL\Client\Abstractions\ACollection;
-use \Able\GraphQL\Client\Client;
+use \Able\GraphQL\Client\Connection;
 
 use \Exception;
 
 abstract class AProvider {
 
 	/**
-	 * @var Client|null
+	 * @var Connection|null
 	 */
-	private ?Client $Client = null;
+	private ?Connection $Client = null;
 
 	/**
 	 * AProvider constructor.
-	 * @param Client $Client
+	 * @param Connection $Client
 	 */
-	public function __construct(Client $Client) {
+	public function __construct(Connection $Client) {
 		$this->Client = $Client;
 	}
 
@@ -29,7 +29,11 @@ abstract class AProvider {
 	 */
 	public function provide(string $request): array /*: ACollection*/ {
 		$this->Client->withQuery($request);
-		return $this->Client->execute();
+
+		$r = $this->Client->execute();
+		_dumpe($r);
+
+		return  $r;
 	}
 
 	/**

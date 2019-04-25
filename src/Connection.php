@@ -4,7 +4,7 @@ namespace Able\GraphQL\Client;
 use \Able\Helpers\Arr;
 use \Exception;
 
-class Client {
+class Connection {
 
 	/**
 	 * @var string|null
@@ -69,32 +69,22 @@ class Client {
 			$Headers[] = sprintf("Authori zation: bearer %s", $this->token);
 		}
 
-		try {
-//			if (($data =
+		if (($rawData = @file_get_contents($this->point, false,
+				stream_context_create([
+					'http' => [
+						'method' => 'POST',
+						'header' => $Headers,
+						'content' => json_encode([
+							'query' => $this->query,
+							'variables' => $this->Variables
+						]),
+					]
+				]))
 
-			$data = file_get_contents($this->point, false,
-
-					stream_context_create([
-						'http' => [
-							'method' => 'POST',
-							'header' => $Headers,
-							'content' => json_encode(['query' => $this->query, 'variables' => $this->Variables]),
-						]
-					]));
-
-//					) == false) {
-//				_dumpe(error_get_last());
-//				throw new Exception(...array_values(Arr::only(error_get_last(), 'message', 'type')));
-//			}
-
-			return json_decode($data, true);
-
-
-		}catch (\Throwable $Exception) {
-			_dumpe($Exception);
+			) == false) {
+				throw new \Exception(ucfirst(preg_replace('/^[^(]+\([^)]+\)\s*:\s*/', '', error_get_last()['message'])));
 		}
 
-//		_dumpe($data);`
-//		return json_decode($data, true);
+		return json_decode($rawData, true);
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Able\GraphQL\Client\Abstractions;
 
-use \Able\GraphQL\Client\Client;
+use \Able\GraphQL\Client\Connection;
 use \Able\GraphQL\Client\Abstractions\AProvider;
 
 abstract class ACollection {

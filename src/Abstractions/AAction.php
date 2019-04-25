@@ -33,12 +33,14 @@ abstract class AAction {
 	 * @param AProvider $Provider
 	 */
 	public function __construct(AProvider $Provider){
-		foreach (array_keys(get_object_vars($this)) as $_) {
+		foreach (array_keys(get_class_vars(get_class($this))) as $_) {
 
 			if (preg_match('/^field([A-Za-z0-9_-]+$)/', $_, $Matches)) {
 				array_push($this->Fields, Src::fcm($Matches[1]));
 			}
 		}
+
+//		_dumpe($this->Fields);
 
 		$this->Provider = $Provider;
 	}
