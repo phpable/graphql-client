@@ -2,22 +2,22 @@
 namespace Able\GraphQL\Client\Utilities\Abstractions;
 
 use Able\GraphQL\Client\Utilities\Abstractions\ACollection;
-use Able\GraphQL\Client\Utilities\Connection;
+use Able\GraphQL\Client\Utilities\Connector;
 
 use \Exception;
 
 abstract class AProvider {
 
 	/**
-	 * @var Connection|null
+	 * @var Connector|null
 	 */
-	private ?Connection $Client = null;
+	private ?Connector $Client = null;
 
 	/**
 	 * AProvider constructor.
-	 * @param Connection $Client
+	 * @param Connector $Client
 	 */
-	public function __construct(Connection $Client) {
+	public function __construct(Connector $Client) {
 		$this->Client = $Client;
 	}
 

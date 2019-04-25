@@ -1,5 +1,5 @@
 <?php
-namespace Able\GraphQL\Client\Utilities\Abstractions;
+namespace Able\GraphQL\Client\Abstractions;
 
 use \Able\Prototypes\TDefault;
 use \Able\Prototypes\IGettable;
