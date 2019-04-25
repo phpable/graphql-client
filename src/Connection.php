@@ -74,6 +74,7 @@ class Connection {
 					'http' => [
 						'method' => 'POST',
 						'header' => $Headers,
+
 						'content' => json_encode([
 							'query' => $this->query,
 							'variables' => $this->Variables
