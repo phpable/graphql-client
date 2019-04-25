@@ -4,7 +4,7 @@ namespace Able\GraphQL\Client\Utilities;
 use \Able\Helpers\Arr;
 use \Exception;
 
-class Connection {
+class Connector {
 
 	/**
 	 * @var string|null
@@ -40,7 +40,7 @@ class Connection {
 	 * @return void
 	 */
 	public final function withQuery(string $query): void {
-		$this->query = $query;
+		$this->query = trim($query);
 	}
 
 	/**
@@ -62,13 +62,25 @@ class Connection {
 	 * @throws Exception
 	 */
 	public final function execute(): array {
+		if (is_null($this->point)
+			|| !filter_var($this->point, FILTER_VALIDATE_URL)) {
+
+				throw new Exception('Undefined or invalid access point!');
+		}
+
+		if (is_null($this->query)
+			|| !preg_match('/^(?:query|mutation)\s*(:?\([^)]+\))?\s*{.*}$/s', $this->query)) {
+
+				throw new Exception('The query is empty or not well-formed!');
+		}
+
 		$Headers = [
 			'Content-Type: application/json',
-			'User-Agent: Able GraphQL client'
+			'User-Agent: Able GraphQL'
 		];
 
 		if (!is_null($this->token)) {
-			$Headers[] = sprintf("Authori zation: bearer %s", $this->token);
+			$Headers[] = sprintf("Authorization: bearer %s", $this->token);
 		}
 
 		if (($rawData = @file_get_contents($this->point, false,

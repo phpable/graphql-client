@@ -39,9 +39,8 @@ abstract class AAction {
 				array_push($this->Fields, Src::fcm($Matches[1]));
 			}
 		}
-
+ 
 //		_dumpe($this->Fields);
-
 		$this->Provider = $Provider;
 	}
 
