@@ -15,13 +15,6 @@ abstract class ARequest {
 	 */
 	protected static ?string $handler = null;
 
-//	/**
-//	 * @return string
-//	 */
-//	protected final function handler(): string {
-//
-//	}
-
 	/**
 	 * @var string
 	 */
