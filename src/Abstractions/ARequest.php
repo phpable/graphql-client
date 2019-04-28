@@ -11,9 +11,16 @@ use \Exception;
 abstract class ARequest {
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
-	protected static string $handler = '';
+	protected static ?string $handler = null;
+
+//	/**
+//	 * @return string
+//	 */
+//	protected final function handler(): string {
+//
+//	}
 
 	/**
 	 * @var string
@@ -59,22 +66,15 @@ abstract class ARequest {
 
 		$Fieldset = new static::$representer();
 
-		$e = sprintf('mutation%s{%s{%s}}', call_user_func(function (){
+		$this->Connector->withQuery(sprintf('mutation%s{%s{%s}}', call_user_func(function (){
 			return $this->compact();
 		}), call_user_func(function (){
 			return static::$handler . $this->inject();
-		}, static::$handler), $Fieldset->present());
+		}, static::$handler), $Fieldset->present()));
 
-		$this->Connector->withQuery($e);
-
-		$Response = $this->Connector->execute();
-		if (isset($Response['error'])) {
-			throw new \Exception(Arr::first($Response['error']));
-		}
-
-		_dumpe(__FILE__, $this->Connector->execute());
-//		$Fieldset->parse($this->Provider->provide($e)['data'][static::$handler]);
-		$Fieldset->parse($this->Connector->execute()['data'][static::$handler]);
+		$Fieldset->parse($r = Arr::apply($this->Connector->execute(), function($_){
+			throw new Exception(Arr::first(Arr::first($_)));
+		}, 'errors')['data'][static::$handler]);
 
 		return $Fieldset;
 	}
