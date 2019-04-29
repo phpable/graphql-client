@@ -13,7 +13,7 @@ abstract class ARequest {
 	/**
 	 * @var string|null
 	 */
-	protected static ?string $handler = null;
+	protected static ?string $header = null;
 
 	/**
 	 * @var string
@@ -49,7 +49,7 @@ abstract class ARequest {
 	 * @throws Exception
 	 */
 	public final function execute(): AFieldset {
-		if (empty(static::$handler)) {
+		if (empty(static::$header)) {
 			throw new Exception('Invalid access point!');
 		}
 
@@ -62,12 +62,12 @@ abstract class ARequest {
 		$this->Connector->withQuery(sprintf('mutation%s{%s{%s}}', call_user_func(function (){
 			return $this->compact();
 		}), call_user_func(function (){
-			return static::$handler . $this->inject();
-		}, static::$handler), $Fieldset->present()));
+			return static::$header . $this->inject();
+		}, static::$header), $Fieldset->present()));
 
 		$Fieldset->parse($r = Arr::apply($this->Connector->execute(), function($_){
 			throw new Exception(Arr::first(Arr::first($_)));
-		}, 'errors')['data'][static::$handler]);
+		}, 'errors')['data'][static::$header]);
 
 		return $Fieldset;
 	}
