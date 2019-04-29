@@ -1,7 +1,8 @@
 <?php
 namespace Able\GraphQL\Client\Abstractions;
 
-use Able\GraphQL\Client\Utilities\Connector;
+use \Able\GraphQL\Client\Utilities\Connector;
+
 use \Able\Helpers\Arr;
 use \Able\Helpers\Src;
 use \Able\Helpers\Str;
@@ -11,14 +12,21 @@ use \Exception;
 abstract class ARequest {
 
 	/**
-	 * @var string|null
+	 * @var string
 	 */
-	protected static ?string $header = null;
+	protected static string $key;
+
+	/**
+	 * @return string
+	 */
+	protected final function key(): string {
+		return static::$key ?? Src::fcm(Src::rns(static::class));
+	}
 
 	/**
 	 * @var string
 	 */
-	protected static string $representer = ARepresenter::class;
+	protected static string $type = ARepresenter::class;
 
 	/**
 	 * @var string[]
@@ -49,25 +57,21 @@ abstract class ARequest {
 	 * @throws Exception
 	 */
 	public final function execute(): AFieldset {
-		if (empty(static::$header)) {
-			throw new Exception('Invalid access point!');
-		}
-
 		foreach ($this->Variables as $name => $value) {
 			$this->Connector->withVariable($name, $value);
 		}
 
-		$Fieldset = new static::$representer();
+		$Fieldset = new static::$type();
 
 		$this->Connector->withQuery(sprintf('mutation%s{%s{%s}}', call_user_func(function (){
 			return $this->compact();
 		}), call_user_func(function (){
-			return static::$header . $this->inject();
-		}, static::$header), $Fieldset->present()));
+			return sprintf('%s%s', $this->key(), $this->inject());
+		}), $Fieldset->present()));
 
 		$Fieldset->parse($r = Arr::apply($this->Connector->execute(), function($_){
 			throw new Exception(Arr::first(Arr::first($_)));
-		}, 'errors')['data'][static::$header]);
+		}, 'errors')['data'][$this->key()]);
 
 		return $Fieldset;
 	}
