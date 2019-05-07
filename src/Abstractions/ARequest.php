@@ -28,10 +28,10 @@ abstract class ARequest {
 	 */
 	protected static string $type = ARepresenter::class;
 
-	/**
-	 * @var string[]
-	 */
-	private array $Fields = [];
+//	/**
+//	 * @var string[]
+//	 */
+//	private array $Fields = [];
 
 	/**
 	 * @var Connector
@@ -42,14 +42,25 @@ abstract class ARequest {
 	 * @param Connector $Connector
 	 */
 	public function __construct(Connector $Connector){
-		foreach (array_keys(get_class_vars(get_class($this))) as $_) {
-
-			if (preg_match('/^field([A-Za-z0-9_-]+$)/', $_, $Matches)) {
-				array_push($this->Fields, Src::fcm($Matches[1]));
-			}
-		}
+//		foreach (array_keys(get_class_vars(get_class($this))) as $_) {
+//
+//			if (preg_match('/^param([A-Za-z0-9_-]+$)/', $_, $Matches)) {
+//				array_push($this->Fields, Src::fcm($Matches[1]));
+//			}
+//		}
+//
+//		_dumpe($this->Fields);
 
 		$this->Connector = $Connector;
+	}
+
+	protected final function compile(array $Variables): string {
+		_dumpe($Variables);
+		return sprintf('mutation%s{%s{%s}}', call_user_func(function (){
+			return $this->compact();
+		}), call_user_func(function (){
+			return sprintf('%s%s', $this->key(), $this->inject());
+		}), $Fieldset->present());
 	}
 
 	/**
@@ -57,17 +68,14 @@ abstract class ARequest {
 	 * @throws Exception
 	 */
 	public final function execute(): AFieldset {
-		foreach ($this->Variables as $name => $value) {
-			$this->Connector->withVariable($name, $value);
-		}
+//		foreach ($this->Variables as $name => $value) {
+//			$this->Connector->withVariable($name, $value);
+//		}
 
 		$Fieldset = new static::$type();
 
-		$this->Connector->withQuery(sprintf('mutation%s{%s{%s}}', call_user_func(function (){
-			return $this->compact();
-		}), call_user_func(function (){
-			return sprintf('%s%s', $this->key(), $this->inject());
-		}), $Fieldset->present()));
+		$this->Connector->withQuery($q = $this->compile(get_class_vars(get_class($this))));
+		_dumpe($q);
 
 		$Fieldset->parse($r = Arr::apply($this->Connector->execute(), function($_){
 			throw new Exception(Arr::first(Arr::first($_)));
@@ -95,11 +103,6 @@ abstract class ARequest {
 	}
 
 	/**
-	 * @var array
-	 */
-	private array $Variables = [];
-
-	/**
 	 * @param string $name
 	 * @param $value
 	 * @return ARequest
@@ -107,11 +110,11 @@ abstract class ARequest {
 	 * @throws Exception
 	 */
 	public final function with(string $name, $value): ARequest {
-		if (!in_array($name, $this->Fields)) {
-			throw new Exception(sprintf('Undefined variable: %s!', $name));
+		if (!property_exists($this, $name = sprintf('param%s', Src::tcm($name)))) {
+			throw new Exception(sprintf('Undeclared parameter: %s!', $name));
 		}
 
-		$this->Variables[$name] = $value;
+		$this->{$name} = $value;
 		return $this;
 	}
 
@@ -125,7 +128,7 @@ abstract class ARequest {
 	 */
 	public function __call(string $name, array $args = []): ARequest {
 		if (!preg_match('/^with([A-Z][A-Za-z-0-9_-]+)$/', $name, $Matches)) {
-			throw new Exception(sprintf('Undefined method: %s!', $name));
+			throw new Exception(sprintf('Undeclared method: %s!', $name));
 		}
 
 		return $this->with(Src::fcm($Matches[1]), Arr::first($args));
