@@ -1,5 +1,5 @@
 <?php
-namespace Able\GraphQL\Client\Utilities;
+namespace Able\GraphQL\Client;
 
 use \Able\Helpers\Arr;
 use \Exception;
@@ -50,10 +50,10 @@ class Connector {
 
 	/**
 	 * @param string $name
-	 * @param string $value
+	 * @param mixed $value
 	 * @return void
 	 */
-	public final function withVariable(string $name, string $value): void {
+	public final function withVariable(string $name, $value): void {
 		$this->Variables[$name] = $value;
 	}
 
@@ -76,11 +76,11 @@ class Connector {
 
 		$Headers = [
 			'Content-Type: application/json',
-			'User-Agent: Able GraphQL'
+			'User-Agent: Able GraphQL Client'
 		];
 
 		if (!is_null($this->token)) {
-			$Headers[] = sprintf("Authorization: bearer %s", $this->token);
+			$Headers[] = sprintf("Authorization: Bearer %s", $this->token);
 		}
 
 		if (($rawData = @file_get_contents($this->point, false,
