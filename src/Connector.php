@@ -2,7 +2,7 @@
 namespace Able\GraphQL\Client;
 
 use \Able\Helpers\Arr;
-use \Exception;
+use \Able\GraphQL\Client\Exceptions\EUnresolvableRequest;
 
 class Connector {
 
@@ -59,7 +59,7 @@ class Connector {
 
 	/**
 	 * @return array
-	 * @throws Exception
+	 * @throws EUnresolvableRequest
 	 */
 	public final function execute(): array {
 		if (is_null($this->point)
@@ -83,7 +83,8 @@ class Connector {
 			$Headers[] = sprintf("Authorization: Bearer %s", $this->token);
 		}
 
-		if (($rawData = @file_get_contents($this->point, false,
+		try {
+			$rawData = file_get_contents($this->point, false,
 				stream_context_create([
 					'http' => [
 						'method' => 'POST',
@@ -94,12 +95,12 @@ class Connector {
 							'variables' => $this->Variables
 						]),
 					]
-				]))
-
-			) == false) {
-				throw new \Exception(ucfirst(preg_replace('/^[^(]+\([^)]+\)\s*:\s*/', '', error_get_last()['message'])));
+			]));
+		} catch (\Throwable $Exception) {
+			throw new EUnresolvableRequest($Exception);
 		}
 
-		return json_decode($rawData, true);
+		return Arr::cast(json_decode($rawData, true));
 	}
 }
+
