@@ -4,6 +4,8 @@ namespace Able\GraphQL\Client;
 use \Able\Helpers\Arr;
 use \Able\GraphQL\Client\Exceptions\EUnresolvableRequest;
 
+use \Exception;
+
 class Connector {
 
 	/**
@@ -54,11 +56,37 @@ class Connector {
 	 * @return void
 	 */
 	public final function withVariable(string $name, $value): void {
+		if (!is_scalar($value)) {
+			throw new Exception(sprintf('Invalid argument type: %s!', gettype($value)));
+		}
+
 		$this->Variables[$name] = $value;
 	}
 
 	/**
+	 * @param array $Values
+	 * @return void
+	 *
+	 * @throws Exception
+	 */
+	public final function withVariables(array $Values): void {
+		foreach($Values as $name => $value) {
+
+			/**
+			 * The only string as indexes are supported.
+			 */
+			if (!is_string($name)) {
+				throw new Exception(sprintf('Unsupported index type: %s!', gettype($name)));
+			}
+
+			$this->withVariable($name, $value);
+		}
+	}
+
+	/**
 	 * @return array
+	 *
+	 * @throws Exception
 	 * @throws EUnresolvableRequest
 	 */
 	public final function execute(): array {
