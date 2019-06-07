@@ -112,7 +112,7 @@ class Connector {
 		}
 
 		try {
-			$rawData = file_get_contents($this->point, false,
+			return Arr::cast(json_decode(file_get_contents($this->point, false,
 				stream_context_create([
 					'http' => [
 						'method' => 'POST',
@@ -123,12 +123,10 @@ class Connector {
 							'variables' => $this->Variables
 						]),
 					]
-			]));
+			])), true, 512, JSON_THROW_ON_ERROR));
 		} catch (\Throwable $Exception) {
 			throw new EUnresolvableRequest($Exception);
 		}
-
-		return Arr::cast(json_decode($rawData, true));
 	}
 }
 
